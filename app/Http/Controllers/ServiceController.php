@@ -40,7 +40,7 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
-        // m1 comment
+        // m1 comments
         try{
             $validator = \Validator::make($request->all(), [        
                 'company_id'   => 'required|integer',
