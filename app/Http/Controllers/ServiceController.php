@@ -54,39 +54,41 @@ class ServiceController extends Controller
             $max_mount = $this->enterpriseArray[$key]['max_mount'];
             $companyProduct = join(', ', $this->enterpriseArray[$key]['product']);            
             $validationOutputs = [
-                'authorized' => "false",   
+                'authorized' => "true",   
                 'company_name' => "",
                 'product' => "",      
                 'business_errors' => [],  
-            ];            
+            ]; 
+            // $productData = null;
+            $validateError = false;           
             
             if($key != ''){ // It validates if the company exists   
-                if($request->amount >= $min_mount && $request->amount <= $max_mount){ // It validates the minimum and maximum amount
-                    if (in_array($request->product, $this->enterpriseArray[$key]['product'])){ // It validates the type of product
-                        $productId = array_search($request->product,  $this->enterpriseArray[$key]['product'])+1;
-                        $productData = [
-                            'id' => "{$productId}",
-                            'type' => $request->product,
-                            'amount' => $request->amount,
-                            'date_operation' => date('Y-m-d H:i:s'),
-                        ];   
-                        $validationOutputs['authorized'] = "true";
-                        $validationOutputs['company_name'] = $this->enterpriseArray[$key]['company_name'];
-                        $validationOutputs['product'] = $productData;
-                    }else{
-                        $validationOutputs['authorized'] = "false";
-                        $validationOutputs['business_errors'][] = "This company only operates these products '{$companyProduct}'";
-                    }
-                }else{
+                if( !($request->amount >= $min_mount && $request->amount <= $max_mount) ){ // It validates the minimum and maximum amount                                        
                     $validationOutputs['authorized'] = "false";
                     $validationOutputs['business_errors'][] = "This company only allows this amount range {$min_mount} - {$max_mount}";
+                }
+                if (!in_array($request->product, $this->enterpriseArray[$key]['product'])){ // It validates the type of product                    
+                    $validationOutputs['authorized'] = "false";
+                    $validationOutputs['business_errors'][] = "This company only operates these products '{$companyProduct}'";
+                }
+                if($validationOutputs['authorized'] == "true"){
+                    $productId = array_search($request->product,  $this->enterpriseArray[$key]['product'])+1;
+                    $productData = [
+                        'id' => "{$productId}",
+                        'type' => $request->product,
+                        'amount' => $request->amount,
+                        'date_operation' => date('Y-m-d H:i:s'),
+                    ];
+                    $validationOutputs['company_name'] = $this->enterpriseArray[$key]['company_name'];
+                    $validationOutputs['product'] = $productData;
                 }
             }else{               
                 $validationOutputs['authorized'] = "false";
                 $validationOutputs['business_errors'][] = "The company does not exist.";              
-            } 
-            return response()->json($validationOutputs);             
-        }catch (\Exception $e){            
+            }          
+            return response()->json($validationOutputs);           
+        }catch (\Exception $e){       
+            $validationOutputs['authorized'] = "false";     
             $validationOutputs['business_errors'][] = $e->getMessage().", the exception was created on line: " . $e->getLine(); 
             return response()->json($validationOutputs, 500);    
         }         
@@ -99,8 +101,12 @@ class ServiceController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    {
-        //
+    {  
+        $key = array_search($id, array_column($this->enterpriseArray, 'company_id')); 
+        if($key != ''){
+            return response()->json($this->enterpriseArray[$key]);     
+        }
+        return response()->json('No company found'); 
     }
 
     /**
