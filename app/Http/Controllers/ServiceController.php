@@ -86,7 +86,8 @@ class ServiceController extends Controller
                 $validationOutputs['authorized'] = "false";
                 $validationOutputs['business_errors'][] = "The company does not exist.";              
             }          
-            return response()->json($validationOutputs);           
+            return response()->json($validationOutputs);   
+            //comentario m2        
         }catch (\Exception $e){       
             $validationOutputs['authorized'] = "false";     
             $validationOutputs['business_errors'][] = $e->getMessage().", the exception was created on line: " . $e->getLine(); 
