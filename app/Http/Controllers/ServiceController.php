@@ -88,7 +88,7 @@ class ServiceController extends Controller
             }
             return response()->json($validationOutputs);  
             // deleted m1       
-            // comentario m2     
+            // switched to m2     
         }catch (\Exception $e){       
             $validationOutputs['authorized'] = "false";     
             $validationOutputs['business_errors'][] = $e->getMessage().", the exception was created on line: " . $e->getLine(); 
