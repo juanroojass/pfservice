@@ -87,7 +87,7 @@ class ServiceController extends Controller
                 $validationOutputs['business_errors'][] = "The company does not exist.";              
             }
             return response()->json($validationOutputs);  
-            // comentario m1       
+            // deleted m1       
             // comentario m2     
         }catch (\Exception $e){       
             $validationOutputs['authorized'] = "false";     
