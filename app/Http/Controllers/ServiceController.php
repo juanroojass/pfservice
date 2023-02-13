@@ -40,6 +40,7 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
+        // m1 comment
         try{
             $validator = \Validator::make($request->all(), [        
                 'company_id'   => 'required|integer',
@@ -86,8 +87,7 @@ class ServiceController extends Controller
                 $validationOutputs['authorized'] = "false";
                 $validationOutputs['business_errors'][] = "The company does not exist.";              
             }
-            return response()->json($validationOutputs);
-            // switched to m1 hoy
+            return response()->json($validationOutputs);            
             // switched to m2 hoy
         }catch (\Exception $e){       
             $validationOutputs['authorized'] = "false";     
